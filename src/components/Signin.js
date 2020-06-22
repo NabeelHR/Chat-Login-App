@@ -1,15 +1,8 @@
 import React, { Component } from "react"
 import "../App.css"
+import WelcomeScreen from "./WelcomeScreen" 
+
 import axios from 'axios'
-
-const formValid = (formErrors) => {
-	let valid = true
-	Object.values(formErrors).forEach((val) => {
-		val.length > 0 && (valid = false)
-	})
-
-	return valid
-}
 
 class Signin extends Component {
 	constructor(props) {
@@ -17,6 +10,7 @@ class Signin extends Component {
 		this.state = {
 			username: null,
 			password: null,
+			isLoggedIn: false,
 		}
 	}
 
@@ -24,6 +18,14 @@ class Signin extends Component {
 		e.preventDefault()
 		const { name, value } = e.target
 		this.setState({  [name]: value }, () => console.log(this.state));
+	}
+	logout = () => {
+		console.log("LOGOUT FOO CALLED")
+		// e.preventDefault()
+		this.setState({
+			username: null,
+			password: null,
+			isLoggedIn: false,		})
 	}
 
 	handleSubmit = (e) => {
@@ -33,8 +35,12 @@ class Signin extends Component {
 			.then(res => {
 				console.log("GET request made")
 				if (res.data.length > 0 && (res.data[0].pwd === this.state.password)){
+					// console.log(this.state.isLoggedIn)
 					console.log(res.data.length, res.data)
 					console.log("login authenticated")
+					this.setState ({
+						isLoggedIn: true,
+					})
 				} else {
 					console.log("invalid login details")
 				}
@@ -42,44 +48,47 @@ class Signin extends Component {
 			.catch(err => console.log(err))
 	}
 	render() {
-		const { formErrors } = this.state;
-		
-		return (
-			<div className="wrapper">
-				<div className="form-wrapper">
-					<h1>
-						<strong>Sign in</strong>
-					</h1>
-					<form onSubmit={this.handleSubmit} noValidate>
-						<div className="username">
-							<label htmlFor="username">Username</label>
-							<input
-								type="text"
-								className=""
-								noValidate
-								name="username"
-								placeholder="Username"
-								onChange={this.handleChange}
-							/>
-						</div>
-						<div className="password">
-							<label htmlFor="password">Password</label>
-							<input
-								type="password"
-								className=""
-								noValidate
-								name="password"
-								placeholder="Password"
-								onChange={this.handleChange}
-							/>
-						</div>
-						<div className="createAccount">
-							<button type="submit">Sign In</button>
-						</div>
-					</form>
+		if (this.state.isLoggedIn){
+			return <WelcomeScreen logout={this.logout}/>
+		}else{
+
+			return (
+				<div className="wrapper">
+					<div className="form-wrapper">
+						<h1>
+							<strong>Sign in</strong>
+						</h1>
+						<form onSubmit={this.handleSubmit} noValidate>
+							<div className="username">
+								<label htmlFor="username">Username</label>
+								<input
+									type="text"
+									className=""
+									noValidate
+									name="username"
+									placeholder="Username"
+									onChange={this.handleChange}
+								/>
+							</div>
+							<div className="password">
+								<label htmlFor="password">Password</label>
+								<input
+									type="password"
+									className=""
+									noValidate
+									name="password"
+									placeholder="Password"
+									onChange={this.handleChange}
+								/>
+							</div>
+							<div className="createAccount">
+								<button type="submit">Sign In</button>
+							</div>
+						</form>
+					</div>
 				</div>
-			</div>
-		)
+			)
+		}
 	}
 }
 
