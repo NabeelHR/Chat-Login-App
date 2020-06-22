@@ -1,4 +1,5 @@
 import React, { Component } from "react"
+import axios from 'axios'
 import "../App.css"
 
 const formValid = (formErrors) => {
@@ -52,7 +53,15 @@ class Signup extends Component {
 	handleSubmit = (e) => {
 		e.preventDefault()
 		if (formValid(this.state.formErrors)) {
-			console.log(`Now submitting details for user ${this.state.name}`)
+			const newUser = {
+				name: this.state.name,
+				username: this.state.username,
+				pwd: this.state.password
+			}
+			console.log(`Now submitting details for user ${this.state.name} with username ${newUser.username}`)
+			axios.post('http://localhost:5000/users', newUser)
+				.then(res => console.log(res.data))
+				.catch(err => {})
 		} else {
 			console.error("Form invalid - incorrect format")
 		}
